@@ -320,18 +320,18 @@ async def predict(request: Request):
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
-@app.post("/walkingpredict")
-async def walking_predict(request: Request):
-    try:
-        # Get JSON body
-        data = await request.json()
-        # Convert into DataFrame
-        input_df = pd.DataFrame([data])
+# @app.post("/walkingpredict")
+# async def walkingpredict(request: Request):
+#     try:
+#         # Get JSON body
+#         data = await request.json()
+#         # Convert into DataFrame
+#         input_df = pd.DataFrame([data])
         
-        # Predict
-        prediction = walking_model.predict(input_df)
+#         # Predict
+#         prediction = walking_model.predict(input_df)
         
-        return {"Predicted Action": prediction[0]}
+#         return {"Predicted Action": prediction[0]}
     
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=500)
+#     except Exception as e:
+#         return JSONResponse({"error": str(e)}, status_code=500)
