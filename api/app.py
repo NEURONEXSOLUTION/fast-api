@@ -6,7 +6,7 @@ from scipy.signal import butter, filtfilt
 from scipy.stats import kurtosis as _kurtosis, skew as _skew, iqr
 from numpy.fft import rfft, rfftfreq
 import math
-
+import pandas as pd
 # -------------------- Initialize FastAPI -------------------- #
 app = FastAPI(title="HAR Prediction API")
 
@@ -14,6 +14,7 @@ app = FastAPI(title="HAR Prediction API")
 model = joblib.load("svc_model.pkl")
 pca = joblib.load("pca_transform.pkl")            # trained on 561 features
 label_encoder = joblib.load("label_encoder.pkl")  # encodes activity labels
+walking_model = joblib.load("walking_classifier.pkl")
 
 # -------------------- HAR constants -------------------- #
 FS = 50.0      # Hz (UCI HAR)
@@ -319,5 +320,18 @@ async def predict(request: Request):
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
-
-
+@app.post("/walkingpredict")
+async def walking_predict(request: Request):
+    try:
+        # Get JSON body
+        data = await request.json()
+        # Convert into DataFrame
+        input_df = pd.DataFrame([data])
+        
+        # Predict
+        prediction = walking_model.predict(input_df)
+        
+        return {"Predicted Action": prediction[0]}
+    
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
