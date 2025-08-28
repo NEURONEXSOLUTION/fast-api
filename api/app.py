@@ -361,8 +361,8 @@ def predict():
         traceback.print_exc()
         return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
     
-
-@app.post("/WalkingPredict")
+@app.route('/WalkingPredict', methods=['POST'])
+# @app.post("/WalkingPredict")
 def predict_walking():
     data = request.get_json(force=True)
     # Convert input to DataFrame
