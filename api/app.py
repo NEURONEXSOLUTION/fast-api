@@ -363,7 +363,8 @@ def predict():
     
 
 @app.post("/WalkingPredict")
-def predict(data: InputData):
+def predict_walking():
+    data = request.get_json(force=True)
     # Convert input to DataFrame
     input_df = pd.DataFrame([data.dict()])
     
