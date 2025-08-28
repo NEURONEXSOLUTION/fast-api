@@ -15,7 +15,7 @@ app = FastAPI(title="HAR Prediction API")
 model = joblib.load("svc_model.pkl")
 pca = joblib.load("pca_transform.pkl")            # trained on 561 features
 label_encoder = joblib.load("label_encoder.pkl")  # encodes activity labels
-model = joblib.load("walking_classifier.pkl")
+walking_model  = joblib.load("walking_classifier.pkl")
 
 # -------------------- HAR constants -------------------- #
 FS = 50.0      # Hz (UCI HAR)
@@ -302,11 +302,11 @@ def extract_uci_har_561(acc_xyz, gyro_xyz):
     return features_array, names
 
 # -------------------- Flask routes -------------------- #
-@app.route('/')
+@app.get('/')
 def home():
     return {"message": "API is working"}
 
-@app.route('/predict', methods=['POST'])
+@app.post('/predict')
 async def predict(request: Request):
     try:
         data = await request.json()
@@ -361,14 +361,15 @@ async def predict(request: Request):
         traceback.print_exc()
         return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
     
-@app.route('/WalkingPredict', methods=['POST'])
-# @app.post("/WalkingPredict")
+@app.post("/WalkingPredict")
 async def predict_walking(request: Request):
-    data = request.get_json(force=True)
-    # Convert input to DataFrame
-    input_df = pd.DataFrame([data.dict()])
+    try:
+        data = await request.json()  # FastAPI way
+        input_df = pd.DataFrame([data])
+
+        prediction = walking_model.predict(input_df)
+        return {"Predicted Action": prediction[0]}
     
-    # Make prediction
-    prediction = model.predict(input_df)
-    
-    return {"Predicted Action": prediction[0]}
+    except Exception as e:
+        traceback.print_exc()
+        return JSONResponse(content={"error": f"Prediction failed: {str(e)}"}, status_code=500)
