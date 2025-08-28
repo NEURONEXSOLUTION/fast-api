@@ -15,7 +15,7 @@ app = FastAPI(title="HAR Prediction API")
 model = joblib.load("svc_model.pkl")
 pca = joblib.load("pca_transform.pkl")            # trained on 561 features
 label_encoder = joblib.load("label_encoder.pkl")  # encodes activity labels
-walking_model = joblib.load("walking_model.pkl") 
+walking_model = joblib.load("walking_classifier.pkl") 
 
 # -------------------- HAR constants -------------------- #
 FS = 50.0      # Hz (UCI HAR)
